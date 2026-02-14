@@ -44,6 +44,7 @@ export class UploadController {
 
     const compressedFilename = `compressed-${path.parse(file.filename).name}.jpg`;
     const compressedPath = path.join('images', compressedFilename);
+  
 
     await sharp(file.path)
       .resize(1024)
