@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
@@ -16,10 +16,31 @@ export class ServicesService {
   }
 
   async update(id: string, dto: UpdateServiceDto) {
-    return this.prisma.service.update({ where: { id }, data: dto });
+    try {
+      return await this.prisma.service.update({
+        where: { id },
+        data: dto,
+      });
+    } catch (error) {
+      if (error.code === 'P2025') {
+        throw new NotFoundException(`Service with ID ${id} not found`);
+      }
+      throw error;
+    }
   }
 
+  // src/servicee/service.service.ts
+
   async remove(id: string) {
-    return this.prisma.service.delete({ where: { id } });
+    try {
+      return await this.prisma.service.delete({
+        where: { id },
+      });
+    } catch (error) {
+      if (error.code === 'P2025') {
+        throw new NotFoundException(`Service with ID ${id} not found`);
+      }
+      throw error;
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
@@ -8,10 +8,19 @@ export class OrderService {
   constructor(private prisma: PrismaService) {}
 
   async create(dto: CreateOrderDto) {
-    return this.prisma.order.create({
-      data: dto,
-      include: { service: true }, // relation bilan Service ni ham qaytaradi
-    });
+    try {
+      return await this.prisma.order.create({
+        data: dto,
+        include: { service: true },
+      });
+    } catch (error) {
+      if (error.code === 'P2003') {
+        throw new NotFoundException(
+          `Service with ID ${dto.serviceId} not found`,
+        );
+      }
+      throw error;
+    }
   }
 
   async findAll() {
@@ -19,17 +28,46 @@ export class OrderService {
   }
 
   async findOne(id: string) {
-    return this.prisma.order.findUnique({
+    const order = await this.prisma.order.findUnique({
       where: { id },
       include: { service: true },
     });
+
+    if (!order) {
+      throw new NotFoundException(`Order with ID ${id} not found`);
+    }
+
+    return order;
   }
 
   async update(id: string, dto: UpdateOrderDto) {
-    return this.prisma.order.update({ where: { id }, data: dto });
+    try {
+      return await this.prisma.order.update({
+        where: { id },
+        data: dto,
+        include: { service: true },
+      });
+    } catch (error) {
+      if (error.code === 'P2025') {
+        throw new NotFoundException(`Order with ID ${id} not found`);
+      }
+      if (error.code === 'P2003') {
+        throw new NotFoundException(
+          `Service with ID ${dto.serviceId} not found`,
+        );
+      }
+      throw error;
+    }
   }
 
   async remove(id: string) {
-    return this.prisma.order.delete({ where: { id } });
+    try {
+      return await this.prisma.order.delete({ where: { id } });
+    } catch (error) {
+      if (error.code === 'P2025') {
+        throw new NotFoundException(`Order with ID ${id} not found`);
+      }
+      throw error;
+    }
   }
 }

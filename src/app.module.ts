@@ -11,7 +11,15 @@ import { ContactMessagesModule } from './contact-messages/contact-messages.modul
 import { UploadController } from './upload/upload.controller';
 
 @Module({
-  imports: [PrismaModule, UserModule, CompanyModule, ServiceModule, OrderModule, ProjectModule, ContactMessagesModule],
+  imports: [
+    PrismaModule,
+    UserModule,
+    CompanyModule,
+    ServiceModule,
+    OrderModule,
+    ProjectModule,
+    ContactMessagesModule,
+  ],
   controllers: [AppController, UploadController],
   providers: [AppService],
 })
