@@ -16,10 +16,9 @@ async function bootstrap() {
   app.useStaticAssets(process.cwd() + '/images', {
     prefix: '/images',
   });
-  
 
   app.enableCors({
-    origin: '*',
+    origin: ['http://localhost:5173', 'https://parvozcompany.uz'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
