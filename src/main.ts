@@ -18,14 +18,8 @@ async function bootstrap() {
   });
 
   app.enableCors({
-    origin: [
-      'http://localhost:8081',
-      'http://192.168.0.191:8081',
-      'https://parvozcompany.uz',
-      'https://www.parvozcompany.uz',
-    ],
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    allowedHeaders: 'Content-Type, Authorization',
+    origin: '*', 
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
 
